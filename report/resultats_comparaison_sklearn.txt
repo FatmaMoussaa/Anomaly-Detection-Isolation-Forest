@@ -1,0 +1,9 @@
+=== Implémentation rapide (scikit-learn) sur iris ===
+score le plus élevé : 0.645 | ligne 131
+anomalies (predict = -1) : 38 sur 150 (contamination='auto')
+
+=== Notre implémentation contre scikit-learn (T = 100, psi = 256, 5 graines) ===
+   jeu |     n x d |  Spearman moyen |  top-10 communs
+  iris |  150x4   |           0.969 |            96%
+ glass |  214x9   |           0.985 |            84%
+  wdbc |  569x30  |           0.956 |            80%

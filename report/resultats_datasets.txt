@@ -1,0 +1,72 @@
+=== iris : 150 observations, 4 attributs ===
+modèle : IsolationForest(n_arbres=100, psi=256, contamination=0.05, seuil=0.6, random_state=42)
+forêt  : {'n_arbres': 100, 'psi_effectif': 150, 'limite_hauteur': 8, 'c(psi)': 9.1824, 'hauteur_max_observee': 8, 'hauteur_moyenne': 8.0, 'noeuds_internes_moyens': 54.6, 'feuilles_moyennes': 55.6, 'seuil': 0.593}
+temps  : fit 0.08 s, scoring 0.01 s
+scores : min 0.390 | médiane 0.455 | max 0.650
+seuil  : 0.593 (quantile 95 %) -> 8 points déclarés anomalies sur 150
+10 points les plus anormaux (indice de ligne, score, E(h)) :
+   ligne  131  s = 0.650  E(h) = 5.71
+   ligne  117  s = 0.633  E(h) = 6.05
+   ligne  118  s = 0.624  E(h) = 6.25
+   ligne  109  s = 0.605  E(h) = 6.65
+   ligne   60  s = 0.604  E(h) = 6.68
+   ligne   41  s = 0.602  E(h) = 6.73
+   ligne   13  s = 0.598  E(h) = 6.81
+   ligne   15  s = 0.597  E(h) = 6.83
+   ligne   14  s = 0.588  E(h) = 7.04
+   ligne   22  s = 0.585  E(h) = 7.10
+figure : report/figures/iris_tableau_de_bord.png
+=== glass : 214 observations, 9 attributs ===
+modèle : IsolationForest(n_arbres=100, psi=256, contamination=0.05, seuil=0.6, random_state=42)
+forêt  : {'n_arbres': 100, 'psi_effectif': 214, 'limite_hauteur': 8, 'c(psi)': 9.8911, 'hauteur_max_observee': 8, 'hauteur_moyenne': 8.0, 'noeuds_internes_moyens': 39.1, 'feuilles_moyennes': 40.1, 'seuil': 0.5849}
+temps  : fit 0.05 s, scoring 0.02 s
+scores : min 0.341 | médiane 0.393 | max 0.729
+seuil  : 0.585 (quantile 95 %) -> 11 points déclarés anomalies sur 214
+10 points les plus anormaux (indice de ligne, score, E(h)) :
+   ligne  106  s = 0.729  E(h) = 4.51
+   ligne  163  s = 0.681  E(h) = 5.49
+   ligne  107  s = 0.669  E(h) = 5.74
+   ligne  184  s = 0.645  E(h) = 6.26
+   ligne  171  s = 0.627  E(h) = 6.65
+   ligne  172  s = 0.626  E(h) = 6.68
+   ligne  185  s = 0.610  E(h) = 7.05
+   ligne  189  s = 0.608  E(h) = 7.10
+   ligne  105  s = 0.607  E(h) = 7.12
+   ligne  201  s = 0.592  E(h) = 7.49
+figure : report/figures/glass_tableau_de_bord.png
+=== wdbc : 569 observations, 30 attributs ===
+modèle : IsolationForest(n_arbres=100, psi=256, contamination=0.05, seuil=0.6, random_state=42)
+forêt  : {'n_arbres': 100, 'psi_effectif': 256, 'limite_hauteur': 8, 'c(psi)': 10.2487, 'hauteur_max_observee': 8, 'hauteur_moyenne': 8.0, 'noeuds_internes_moyens': 54.5, 'feuilles_moyennes': 55.5, 'seuil': 0.5375}
+temps  : fit 0.10 s, scoring 0.05 s
+scores : min 0.355 | médiane 0.412 | max 0.676
+seuil  : 0.537 (quantile 95 %) -> 29 points déclarés anomalies sur 569
+10 points les plus anormaux (indice de ligne, score, E(h)) :
+   ligne  461  s = 0.676  E(h) = 5.79
+   ligne  212  s = 0.660  E(h) = 6.14
+   ligne  122  s = 0.655  E(h) = 6.25
+   ligne  152  s = 0.649  E(h) = 6.39
+   ligne  108  s = 0.631  E(h) = 6.80
+   ligne   78  s = 0.626  E(h) = 6.92
+   ligne    3  s = 0.618  E(h) = 7.12
+   ligne   12  s = 0.603  E(h) = 7.48
+   ligne   82  s = 0.590  E(h) = 7.79
+   ligne   68  s = 0.586  E(h) = 7.91
+figure : report/figures/wdbc_tableau_de_bord.png
+=== gauss : 600 observations, 2 attributs ===
+modèle : IsolationForest(n_arbres=100, psi=256, contamination=0.05, seuil=0.6, random_state=42)
+forêt  : {'n_arbres': 100, 'psi_effectif': 256, 'limite_hauteur': 8, 'c(psi)': 10.2487, 'hauteur_max_observee': 8, 'hauteur_moyenne': 8.0, 'noeuds_internes_moyens': 52.7, 'feuilles_moyennes': 53.7, 'seuil': 0.5795}
+temps  : fit 0.10 s, scoring 0.06 s
+scores : min 0.377 | médiane 0.412 | max 0.793
+seuil  : 0.579 (quantile 95 %) -> 30 points déclarés anomalies sur 600
+10 points les plus anormaux (indice de ligne, score, E(h)) :
+   ligne  584  s = 0.793  E(h) = 3.43
+   ligne  596  s = 0.780  E(h) = 3.67
+   ligne  578  s = 0.780  E(h) = 3.68
+   ligne  592  s = 0.763  E(h) = 4.00
+   ligne  573  s = 0.752  E(h) = 4.21
+   ligne  594  s = 0.749  E(h) = 4.26
+   ligne  579  s = 0.737  E(h) = 4.51
+   ligne  572  s = 0.736  E(h) = 4.52
+   ligne  599  s = 0.730  E(h) = 4.65
+   ligne  574  s = 0.726  E(h) = 4.73
+figure : report/figures/gauss_tableau_de_bord.png

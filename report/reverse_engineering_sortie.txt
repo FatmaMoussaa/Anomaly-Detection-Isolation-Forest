@@ -1,0 +1,102 @@
+
+==============================================================================
+1. LE TABLEAU 2D : numpy.ndarray
+==============================================================================
+type(X)            : <class 'numpy.ndarray'>
+X.dtype / itemsize : float64 / 8 octets par élément
+X.shape / X.ndim   : (6, 2) / 2
+X.strides          : (16, 8) -> pour passer à la ligne suivante on saute 16 octets, à la colonne suivante 8 octets
+X.nbytes           : 96 octets (= 6 x 2 x 8) dans UN seul tampon contigu
+flags              : C_CONTIGUOUS = True | OWNDATA = True
+adresse du tampon  : 0x1e58c2d0
+
+Colonne X[:, q] (utilisée à chaque coupe) :
+  strides = (16,) | contiguë = False | est une vue de X = True | partage la mémoire = True
+Tranche X[1:4]       : vue = True | partage la mémoire = True
+Indexation X[[0,3,5]]: vue = False | partage la mémoire = False -> COPIE (indexation avancée)
+Masque booléen X[X[:,0] < 6] : partage la mémoire = False -> COPIE
+
+sous_echantillonnage(1000 pts, psi=100) : partage la mémoire avec X = False -> copie indépendante, coût O(psi)
+sous_echantillonnage(n <= psi) renvoie le MÊME objet que X : True
+
+==============================================================================
+2. L'ARBRE BINAIRE : Noeud et Feuille
+==============================================================================
+MRO de Noeud       : ['Noeud', 'NoeudArbre', 'object']
+MRO de Feuille     : ['Feuille', 'NoeudArbre', 'object']
+Noeud.__slots__    : ('attribut', 'seuil', 'gauche', 'droite') | a un __dict__ ? False
+Feuille.__slots__  : ('taille',)
+sys.getsizeof(Noeud)   : 64 octets (hors enfants)
+sys.getsizeof(Feuille) : 40 octets
+Même nœud SANS __slots__ : objet 48 + __dict__ 296 = 344 octets -> __slots__ économise ~81 %
+
+Un arbre construit sur psi=256 points : 47 nœuds internes + 48 feuilles (= 48 car arbre binaire strict), hauteur 8 (limite 8)
+Empreinte approx. de cet arbre : 4928 octets (nœuds seulement ; les floats du seuil et les entiers sont des objets Python en plus)
+L'arbre ne stocke AUCUN point : seulement (q, p) aux nœuds et la taille aux feuilles.
+
+==============================================================================
+3. LA LISTE (forêt) : list Python = tableau dynamique de références
+==============================================================================
+Sur-allocation : (len, getsizeof) à chaque réallocation : [(1, 88), (5, 120), (9, 184), (17, 248), (25, 312), (33, 376)]
+-> la liste réserve de la place d'avance (append en O(1) amorti) ; chaque case = un pointeur de 8 octets
+modele.arbres_ : list de 100 racines | getsizeof = 920 octets (les arbres eux-mêmes sont ailleurs)
+Les 100 éléments sont des objets distincts : True
+
+==============================================================================
+4. LA PILE D'APPELS : récursion de construire_itree
+==============================================================================
+sys.getrecursionlimit() = 1000 (limite de Python)
+  psi =    8 : limite l = ceil(log2 psi) =  3 -> profondeur max de la pile =  4 (= l + 1) <= recursionlimit
+  psi =   64 : limite l = ceil(log2 psi) =  6 -> profondeur max de la pile =  7 (= l + 1) <= recursionlimit
+  psi =  256 : limite l = ceil(log2 psi) =  8 -> profondeur max de la pile =  9 (= l + 1) <= recursionlimit
+  psi = 1024 : limite l = ceil(log2 psi) = 10 -> profondeur max de la pile = 11 (= l + 1) <= recursionlimit
+La limite l = ceil(log2 psi) borne la pile à l + 1 appels : très loin de la limite de récursion de Python, même pour un grand psi. Sans elle, un arbre déséquilibré pourrait être bien plus profond.
+
+==============================================================================
+5. LE GÉNÉRATEUR ALÉATOIRE : numpy.random.Generator
+==============================================================================
+type(rng)                 : Generator
+rng.bit_generator         : PCG64 (PCG64 : 128 bits d'état)
+état initial (clés)       : ['bit_generator', 'state', 'has_uint32', 'uinteger'] | état.state = {'state': '274674114334540486...', 'inc': '332724090758049132...'}
+Restaurer l'état rejoue la même séquence : [89, 773, 654] == [89, 773, 654] -> True
+C'est ce qui rend random_state reproductible : un seul rng est partagé par le sous-échantillonnage et la construction.
+
+==============================================================================
+6. MATPLOTLIB : la hiérarchie Figure -> Axes -> Artists
+==============================================================================
+MRO de Figure : ['Figure', 'FigureBase', 'Artist', 'object'] ...
+MRO de Axes   : ['Axes', '_AxesBase', 'Artist', 'object'] ...
+fig.axes                 : ['Axes']
+ax.collections / ax.lines: ['PathCollection'] / ['Line2D']
+ax.get_children() (types): ['Line2D', 'PathCollection', 'Rectangle', 'Spine', 'Text', 'XAxis', 'YAxis']
+
+==============================================================================
+7. SCIKIT-LEARN : comment l'implémentation « rapide » code la même forêt
+==============================================================================
+MRO de IsolationForest (sklearn) : ['IsolationForest', 'OutlierMixin', 'BaseBagging', 'BaseEnsemble', 'MetaEstimatorMixin'] ...
+sk.estimators_                   : list de 100 objets ExtraTreeRegressor (la forêt est aussi une liste Python d'arbres)
+MRO d'un arbre                   : ['ExtraTreeRegressor', 'DecisionTreeRegressor', 'RegressorMixin', 'BaseDecisionTree'] ...
+hyper-paramètres de chaque arbre : splitter = 'random' | max_features = 1 | max_depth = 8 (= ceil(log2(150)) = 8)
+sk.max_samples_ / sk.offset_     : 150 / -0.5 (offset_ = -0,5 : seuil du predict quand contamination='auto')
+sk.estimators_samples_[0]        : ndarray d'INDICES de lignes (pas une copie des données) ; 5 premiers = [0, 1, 2, 3, 4]
+
+type(tree_)                    : <class 'sklearn.tree._tree.Tree'> -> classe écrite en Cython (sklearn/tree/_tree.pyx), pas en Python
+tree_.node_count / n_leaves / max_depth : 147 / 74 / 8 (un arbre binaire strict : feuilles = noeuds internes + 1 -> 73 + 1 = 74 )
+Les noeuds sont stockés dans des TABLEAUX PARALLELES numpy (pas d'objet Noeud) :
+  tree_.children_left  : dtype=int64    shape=(147,) 7 premières valeurs = [1, 2, 3, 4, 5, 6, 7]
+  tree_.children_right : dtype=int64    shape=(147,) 7 premières valeurs = [74, 53, 30, 25, 16, 11, 10]
+  tree_.feature        : dtype=int64    shape=(147,) 7 premières valeurs = [3, 1, 0, 3, 1, 3, 0]
+  tree_.threshold      : dtype=float64  shape=(147,) 7 premières valeurs = [0.369, 3.537, 4.96, 0.236, 3.15, 0.16, 4.896]
+  tree_.n_node_samples : dtype=int64    shape=(147,) 7 premières valeurs = [150, 41, 30, 18, 15, 9, 3]
+En réalité un SEUL tampon : tree_.__getstate__()['nodes'] est un tableau structuré numpy :
+  dtype.names = ('left_child', 'right_child', 'feature', 'threshold', 'impurity', 'n_node_samples', 'weighted_n_node_samples', 'missing_go_to_left')
+  itemsize = 64 octets par noeud x 147 noeuds = 9408 octets (les colonnes children_left, threshold... sont des vues de ce tampon)
+Convention : un noeud i est une feuille quand children_left[i] == -1 (constante TREE_LEAF).
+Noeuds internes : 73 | feuilles : 74
+Le noeud 0 est la racine ; ses enfants sont children_left[0] = 1 et children_right[0] = 74 (numérotation en profondeur d'abord)
+
+Parcours pour la ligne 0 : profondeur 8 | taille de la feuille 1 (= n_node_samples de la feuille)
+  decision_path de sklearn : matrice csr_matrix creuse CSR ; nombre de noeuds traversés = 9 = profondeur + 1 -> True
+scikit-learn ajoute ensuite la correction c(n_node_samples) de la feuille (fonction _average_path_length) : c'est la même formule que notre utils.c.
+Comparaison des choix de structure : nous = objets Python (Noeud / Feuille, __slots__) lisibles mais lents ; scikit-learn = tableaux contigus en C, rapides et compacts mais illisibles.
+  Côté scikit-learn un noeud = 64 octets dans un tampon unique ; côté Python chaque Noeud est un objet de 64 octets qui pointe en plus vers un float et un int (objets séparés).

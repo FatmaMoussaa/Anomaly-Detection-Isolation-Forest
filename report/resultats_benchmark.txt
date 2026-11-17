@@ -1,0 +1,15 @@
+=== Stabilité du classement en fonction du nombre d'arbres T (psi = 128) ===
+  iris: n_arbres=1:0.182±0.104  n_arbres=5:0.556±0.104  n_arbres=10:0.710±0.116  n_arbres=25:0.845±0.042  n_arbres=50:0.915±0.034  n_arbres=100:0.957±0.007  n_arbres=200:0.979±0.004
+ glass: n_arbres=1:0.193±0.058  n_arbres=5:0.691±0.093  n_arbres=10:0.864±0.028  n_arbres=25:0.925±0.021  n_arbres=50:0.959±0.008  n_arbres=100:0.983±0.002  n_arbres=200:0.990±0.001
+  wdbc: n_arbres=1:0.187±0.108  n_arbres=5:0.574±0.059  n_arbres=10:0.683±0.063  n_arbres=25:0.836±0.024  n_arbres=50:0.913±0.013  n_arbres=100:0.956±0.006  n_arbres=200:0.978±0.002
+
+=== Stabilité en fonction de la taille du sous-échantillon psi (T = 100) ===
+  iris: psi=8:0.907±0.021  psi=16:0.872±0.092  psi=32:0.934±0.014  psi=64:0.959±0.007  psi=128:0.957±0.007  psi=256:0.963±0.009
+ glass: psi=8:0.951±0.008  psi=16:0.972±0.006  psi=32:0.976±0.006  psi=64:0.980±0.004  psi=128:0.983±0.002  psi=256:0.984±0.002
+  wdbc: psi=8:0.861±0.080  psi=16:0.925±0.012  psi=32:0.947±0.012  psi=64:0.953±0.009  psi=128:0.956±0.006  psi=256:0.960±0.003
+
+=== Complexité : temps de fit en fonction de n (psi = 256, T = 100) ===
+  n =    500 : fit = 0.043 s
+  n =   2000 : fit = 0.044 s
+  n =   8000 : fit = 0.045 s
+  n =  32000 : fit = 0.045 s

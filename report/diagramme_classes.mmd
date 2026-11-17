@@ -1,0 +1,41 @@
+classDiagram
+    class IsolationForest {
+        +int n_arbres
+        +int psi
+        +float contamination
+        +float seuil
+        +int random_state
+        +List~NoeudArbre~ arbres_
+        +int psi_effectif_
+        +int limite_hauteur_
+        +float facteur_c_
+        +float seuil_
+        +int n_features_
+        +fit(X) IsolationForest
+        +chemins_par_arbre(X) ndarray
+        +chemin_moyen(X) ndarray
+        +score_samples(X) ndarray
+        +predict(X) ndarray
+        +fit_predict(X) ndarray
+        +resume() dict
+        +get_params() dict
+    }
+    class NoeudArbre {
+        <<abstract>>
+        +est_feuille() bool
+    }
+    class Noeud {
+        +int attribut
+        +float seuil
+        +NoeudArbre gauche
+        +NoeudArbre droite
+        +est_feuille() bool
+    }
+    class Feuille {
+        +int taille
+        +est_feuille() bool
+    }
+    NoeudArbre <|-- Noeud
+    NoeudArbre <|-- Feuille
+    Noeud o-- NoeudArbre : gauche, droite
+    IsolationForest "1" o-- "T" NoeudArbre : arbres_ (racines)
